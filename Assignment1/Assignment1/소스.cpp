@@ -1,12 +1,16 @@
 /*
 		201412700 성민혁 정보통신공학과
 		사전 프로그램 - 원하는 단어 설명출력, 단어가 없으면 앞 뒤 단어 출력
+		리딩 속도: 5.379 sec
 */
+#pragma warning(disable:4996)
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <string>
 #include <string.h>
+//#include <time.h>
+#define BUFFER 4096	 // 글자 수 보다 버퍼가 더 크게
+
 using namespace std;
 
 string dict[200000];			// 첫번째 단어
@@ -31,8 +35,7 @@ int main() {
 void init() {	counts = 0;	}	// 단어들의 수 초기화
 
 void print(int n) {		// n 번째 단어의 정보 출력
-	cout << dict[n] << " " << wordclass[n] << " " << explain[n];
-	cout << endl;
+	cout << dict[n] << " " << wordclass[n] << explain[n];
 }
 
 void movement() {	// 구동
@@ -51,27 +54,30 @@ void movement() {	// 구동
 }
 
 void read(string name) {	// 단어장 읽는 동작 - 사전 생성
-	ifstream fin(name);
-	if (!fin) cout << "File Open Fail\n";
-	string line;	// 한 줄의 입력 담을 변수
+	//clock_t begin, end;
+	//begin = clock();
+	FILE *fin = fopen((char*)name.c_str(), "r");
+	if(NULL== fin) cout << "File Open Fail\n";
 
-	while (getline(fin, line, '(')) { // 더 이상 입력하는 단어가 없을때까지 반복
-		if (line == "\0") continue;	// 단순 엔터이면 무시
-		
-		line.erase(line.size()-1); // 제일 뒤 공백 제거
-		dict[counts] = line;
+	char line[BUFFER];
 
-		getline(fin, line, ')');				// ()사이의 품사
-		line.insert(line.begin(), '(');
-		line += ')';							// () 붙여줌 + 품사생성
-		wordclass[counts] = line;
+	while (NULL != fgets(line, sizeof(line), fin)) {
+		if (strcmp("\n", line) == 0) continue;
+		string str(line);	// char 배열 line을 string 형 str에 담음
+		int pos1, pos2;
+		pos1 = str.find("(");
+		pos2 = str.find(")");
 
-		getline(fin, line);						// 설명 입력
-		explain[counts] = line;
+		dict[counts] = str.substr(0, pos1 - 1);							// ( 앞까지는 단어
+		wordclass[counts] = str.substr(pos1, pos2 - pos1 + 1);			// () 사이는 품사
+		explain[counts] = str.substr(pos2 + 1, str.size() - pos2-1);	// ) 뒤는 설명
 
-		getline(fin, line);						// 끝에 \0 하나 제거
-		counts++;								// 단어가 1개 입력될때마다 단어 수 증가
+		counts++;														// 단어 수 증가
 	}
+	fclose(fin);
+	//end = clock();
+	//cout << "수행시간 : " << (double)(end - begin) << "\n";
+	
 }// 리딩 종료
 
 void search(string target) {					// 원하는 단어를 찾는 동작
