@@ -1,7 +1,7 @@
 /*
-		201412700 ¼º¹ÎÇõ Á¤º¸Åë½Å°øÇĞ°ú
-		»çÀü ÇÁ·Î±×·¥ - ¿øÇÏ´Â ´Ü¾î ¼³¸íÃâ·Â, ´Ü¾î°¡ ¾øÀ¸¸é ¾Õ µÚ ´Ü¾î Ãâ·Â
-		¸®µù ¼Óµµ: 5.379 sec
+		201412700 ì„±ë¯¼í˜ ì •ë³´í†µì‹ ê³µí•™ê³¼
+		ì‚¬ì „ í”„ë¡œê·¸ë¨ - ì›í•˜ëŠ” ë‹¨ì–´ ì„¤ëª…ì¶œë ¥, ë‹¨ì–´ê°€ ì—†ìœ¼ë©´ ì• ë’¤ ë‹¨ì–´ ì¶œë ¥
+		ë¦¬ë”© ì†ë„: 3.256 sec
 */
 #pragma warning(disable:4996)
 #include <iostream>
@@ -9,51 +9,51 @@
 #include <string>
 #include <string.h>
 //#include <time.h>
-#define BUFFER 4096	 // ±ÛÀÚ ¼ö º¸´Ù ¹öÆÛ°¡ ´õ Å©°Ô
+#define BUFFER 4096	 // ê¸€ì ìˆ˜ ë³´ë‹¤ ë²„í¼ê°€ ë” í¬ê²Œ
 
 using namespace std;
 
-string dict[200000];			// Ã¹¹øÂ° ´Ü¾î
-string wordclass[200000];		// Ç°»ç
-string explain[200000];			// ¼³¸í
+string dict[200000];			// ì²«ë²ˆì§¸ ë‹¨ì–´
+string wordclass[200000];		// í’ˆì‚¬
+string explain[200000];			// ì„¤ëª…
 
-int counts;	// ´Ü¾îµéÀÇ ¼ö
+int counts;	// ë‹¨ì–´ë“¤ì˜ ìˆ˜
 
-void init();			// ½ÃÀÛ½Ã º¯¼ö ÃÊ±âÈ­
-void print(int n);		// ´Ü¾î ¼³¸í Ãâ·Â
-void movement();		// ¸ŞÀÎ µ¿ÀÛ
-void read(string name);	// ÆÄÀÏ ÀĞ¾î¼­ dict¿¡ ÀúÀå
-void search(string target); // dict¿¡¼­ target Ã£±â
-int find(string *words, char* target, int begin, int end); // targetÀ» Ã£´Â µ¿ÀÛ
+void init();			// ì‹œì‘ì‹œ ë³€ìˆ˜ ì´ˆê¸°í™”
+void print(int n);		// ë‹¨ì–´ ì„¤ëª… ì¶œë ¥
+void movement();		// ë©”ì¸ ë™ì‘
+void read(string name);	// íŒŒì¼ ì½ì–´ì„œ dictì— ì €ì¥
+void search(string target); // dictì—ì„œ target ì°¾ê¸°
+int find(string *words, char* target, int begin, int end); // targetì„ ì°¾ëŠ” ë™ì‘
 
 
 int main() {
-	init();				// »çÀü »ı¼ºÀ» À§ÇÑ º¯¼öµé ÃÊ±âÈ­
-	movement();			// »çÀü ÇÁ·Î±×·¥ ±¸µ¿
+	init();				// ì‚¬ì „ ìƒì„±ì„ ìœ„í•œ ë³€ìˆ˜ë“¤ ì´ˆê¸°í™”
+	movement();			// ì‚¬ì „ í”„ë¡œê·¸ë¨ êµ¬ë™
 }
 
-void init() {	counts = 0;	}	// ´Ü¾îµéÀÇ ¼ö ÃÊ±âÈ­
+void init() {	counts = 0;	}	// ë‹¨ì–´ë“¤ì˜ ìˆ˜ ì´ˆê¸°í™”
 
-void print(int n) {		// n ¹øÂ° ´Ü¾îÀÇ Á¤º¸ Ãâ·Â
+void print(int n) {		// n ë²ˆì§¸ ë‹¨ì–´ì˜ ì •ë³´ ì¶œë ¥
 	cout << dict[n] << " " << wordclass[n] << explain[n];
 }
 
-void movement() {	// ±¸µ¿
-	string line, cmd;	// ÀÔ·Â, ¸í·É¾î
+void movement() {	// êµ¬ë™
+	string line, cmd;	// ì…ë ¥, ëª…ë ¹ì–´
 	while (1) {
 		cout << "$ ";
-		getline(cin, line);	// °ø¹é ÀÔ·Âµµ Ã³¸®ÇÏ±âÀ§ÇÔ
+		getline(cin, line);	// ê³µë°± ì…ë ¥ë„ ì²˜ë¦¬í•˜ê¸°ìœ„í•¨
 		istringstream iss(line);
-		iss >> cmd;	// ´Ü¾î »çÀÌÀÇ °ø¹é ¹«½ÃÇÏ°í ÀÔ·Â¹ŞÀ½
+		iss >> cmd;	// ë‹¨ì–´ ì‚¬ì´ì˜ ê³µë°± ë¬´ì‹œí•˜ê³  ì…ë ¥ë°›ìŒ
 
-		if (cmd == "read") {		if (iss >> cmd) read(cmd);		}	// ÀĞ±â µ¿ÀÛ
-		else if (cmd == "size") {	cout << counts << endl;			}	// »çÀü »çÀÌÁî Ãâ·Â
-		else if (cmd == "find") {	if (iss >> cmd) search(cmd);	}	// ´Ü¾î Ã£±â
+		if (cmd == "read") {		if (iss >> cmd) read(cmd);		}	// ì½ê¸° ë™ì‘
+		else if (cmd == "size") {	cout << counts << endl;			}	// ì‚¬ì „ ì‚¬ì´ì¦ˆ ì¶œë ¥
+		else if (cmd == "find") {	if (iss >> cmd) search(cmd);	}	// ë‹¨ì–´ ì°¾ê¸°
 		else if (cmd == "exit") break;
 	}
 }
 
-void read(string name) {	// ´Ü¾îÀå ÀĞ´Â µ¿ÀÛ - »çÀü »ı¼º
+void read(string name) {	// ë‹¨ì–´ì¥ ì½ëŠ” ë™ì‘ - ì‚¬ì „ ìƒì„±
 	//clock_t begin, end;
 	//begin = clock();
 	FILE *fin = fopen((char*)name.c_str(), "r");
@@ -63,63 +63,63 @@ void read(string name) {	// ´Ü¾îÀå ÀĞ´Â µ¿ÀÛ - »çÀü »ı¼º
 
 	while (NULL != fgets(line, sizeof(line), fin)) {
 		if (strcmp("\n", line) == 0) continue;
-		string str(line);	// char ¹è¿­ lineÀ» string Çü str¿¡ ´ãÀ½
+		string str(line);	// char ë°°ì—´ lineì„ string í˜• strì— ë‹´ìŒ
 		int pos1, pos2;
 		pos1 = str.find("(");
 		pos2 = str.find(")");
 
-		dict[counts] = str.substr(0, pos1 - 1);							// ( ¾Õ±îÁö´Â ´Ü¾î
-		wordclass[counts] = str.substr(pos1, pos2 - pos1 + 1);			// () »çÀÌ´Â Ç°»ç
-		explain[counts] = str.substr(pos2 + 1, str.size() - pos2-1);	// ) µÚ´Â ¼³¸í
+		dict[counts] = str.substr(0, pos1 - 1);							// ( ì•ê¹Œì§€ëŠ” ë‹¨ì–´
+		wordclass[counts] = str.substr(pos1, pos2 - pos1 + 1);			// () ì‚¬ì´ëŠ” í’ˆì‚¬
+		explain[counts] = str.substr(pos2 + 1, str.size() - pos2-1);	// ) ë’¤ëŠ” ì„¤ëª…
 
-		counts++;														// ´Ü¾î ¼ö Áõ°¡
+		counts++;														// ë‹¨ì–´ ìˆ˜ ì¦ê°€
 	}
 	fclose(fin);
 	//end = clock();
-	//cout << "¼öÇà½Ã°£ : " << (double)(end - begin) << "\n";
+	//cout << "ìˆ˜í–‰ì‹œê°„ : " << (double)(end - begin) << "\n";
 	
-}// ¸®µù Á¾·á
+}// ë¦¬ë”© ì¢…ë£Œ
 
-void search(string target) {					// ¿øÇÏ´Â ´Ü¾î¸¦ Ã£´Â µ¿ÀÛ
+void search(string target) {					// ì›í•˜ëŠ” ë‹¨ì–´ë¥¼ ì°¾ëŠ” ë™ì‘
 
-	char* temp = (char*)target.c_str();	// Ã£°í ½ÍÀº ´Ü¾î temp
-	int index = find(dict, temp, 0, counts - 1);	// ½ÇÁ¦·Î ¿øÇÏ´Â ´Ü¾î°¡ ÀÖ´ÂÁö »çÀü¿¡¼­ Ã£´Â µ¿ÀÛ. ´Ü¾îÀÇ ÀÎµ¦½º ¹İÈ¯
-	char* comp = (char*)dict[index].c_str();	// ¹İÈ¯¹ŞÀº À§Ä¡ ´Ü¾î
-	int check = _strcmpi(temp, comp);				// ¹İÈ¯¹ŞÀº ÀÎµ¦½º°¡ Ã£Àº µ¥ÀÌÅÍÀÇ À§Ä¡ÀÎÁö, µ¥ÀÌÅÍ°¡ ¾øÀ»‹šÀÇ À§Ä¡ÀÎÁö È®ÀÎ
+	char* temp = (char*)target.c_str();	// ì°¾ê³  ì‹¶ì€ ë‹¨ì–´ temp
+	int index = find(dict, temp, 0, counts - 1);	// ì‹¤ì œë¡œ ì›í•˜ëŠ” ë‹¨ì–´ê°€ ìˆëŠ”ì§€ ì‚¬ì „ì—ì„œ ì°¾ëŠ” ë™ì‘. ë‹¨ì–´ì˜ ì¸ë±ìŠ¤ ë°˜í™˜
+	char* comp = (char*)dict[index].c_str();	// ë°˜í™˜ë°›ì€ ìœ„ì¹˜ ë‹¨ì–´
+	int check = _strcmpi(temp, comp);				// ë°˜í™˜ë°›ì€ ì¸ë±ìŠ¤ê°€ ì°¾ì€ ë°ì´í„°ì˜ ìœ„ì¹˜ì¸ì§€, ë°ì´í„°ê°€ ì—†ì„Â‹Âšì˜ ìœ„ì¹˜ì¸ì§€ í™•ì¸
 
-	if (check == 0) {								// Ã£´Â ´Ü¾î°¡ ÀÖÀ»¶§
+	if (check == 0) {								// ì°¾ëŠ” ë‹¨ì–´ê°€ ìˆì„ë•Œ
 		int start = index, end = index;
 
-		// µ¿ÀÏ ´Ü¾î °¡Àå ¾ÕÀÇ index ¸¦ start¿¡ ÀúÀå
+		// ë™ì¼ ë‹¨ì–´ ê°€ì¥ ì•ì˜ index ë¥¼ startì— ì €ì¥
 		for (int i = index; i >= 0; i--) {
 			char* s = (char*)dict[i].c_str();
 			int c = _strcmpi(temp, s);
 			if (c != 0) { start = i + 1; break; }
-		}// µ¿ÀÏ ´Ü¾î Áß °¡Àå µÚÀÇ index¸¦ end¿¡ ÀúÀå
+		}// ë™ì¼ ë‹¨ì–´ ì¤‘ ê°€ì¥ ë’¤ì˜ indexë¥¼ endì— ì €ì¥
 		for (int i = index; i < counts; i++) {
 			char* s = (char*)dict[i].c_str();
 			int c = _strcmpi(temp, s);
 			if (c != 0) { end = i - 1; break; }
 		}
 
-		// Ã£¾ÒÀ» ‹š Ãâ·Â
+		// ì°¾ì•˜ì„ Â‹Âš ì¶œë ¥
 		cout << "Found " << end - start + 1 << " items.\n";
-		// µ¿ÀÏ ´Ü¾î ÀüºÎ Ãâ·Â
+		// ë™ì¼ ë‹¨ì–´ ì „ë¶€ ì¶œë ¥
 		for (int i = start; i <= end; i++) {
 			print(i);
 		}
-	}// Ã£´Â ´Ü¾î°¡ ¾øÀ»¶§ Ãâ·Â 3°¡Áö °æ¿ì·Î ±¸ºĞ
+	}// ì°¾ëŠ” ë‹¨ì–´ê°€ ì—†ì„ë•Œ ì¶œë ¥ 3ê°€ì§€ ê²½ìš°ë¡œ êµ¬ë¶„
 	else {
 		cout << "Not found.\n";
-		// Á¦ÀÏ ¾Õ ´Ü¾î°¡ Á¸ÀçÇÏÁö ¾ÊÀ»¶§
+		// ì œì¼ ì• ë‹¨ì–´ê°€ ì¡´ì¬í•˜ì§€ ì•Šì„ë•Œ
 		if (index == 0) {
 			cout << "- - -\n";
 			cout << dict[index] << " " << wordclass[index] << endl;
-		}// Á¦ÀÏ µÚ ´Ü¾î°¡ Á¸ÀçÇÏÁö ¾ÊÀ»‹š
+		}// ì œì¼ ë’¤ ë‹¨ì–´ê°€ ì¡´ì¬í•˜ì§€ ì•Šì„Â‹Âš
 		else if (index == counts - 1) {
 			cout << dict[index] << " " << wordclass[index] << endl;
 			cout << "- - -\n";
-		}// ¾Õ µÚ ´Ü¾î°¡ ´Ù ÀÖÀ»¶§
+		}// ì• ë’¤ ë‹¨ì–´ê°€ ë‹¤ ìˆì„ë•Œ
 		else {
 			cout << dict[index] << " " << wordclass[index] << endl;
 			cout << "- - -\n";
@@ -128,13 +128,13 @@ void search(string target) {					// ¿øÇÏ´Â ´Ü¾î¸¦ Ã£´Â µ¿ÀÛ
 	}
 }
 
-// ¿øÇÏ´Â ´Ü¾î¸¦ »çÀü¿¡¼­ Ã£´Â ¼øÈ¯°Ë»ö O(logn)
+// ì›í•˜ëŠ” ë‹¨ì–´ë¥¼ ì‚¬ì „ì—ì„œ ì°¾ëŠ” ìˆœí™˜ê²€ìƒ‰ O(logn)
 int find(string *words, char* target, int begin, int end) {
 	int middle = (begin + end) / 2;
 	if (begin > end) return middle;
 	else {
-		char *temp = (char*)words[middle].c_str(); // ºñ±³ÇÒ Ã¹ ¹øÂ°´Ü¾î
-		int comp = _stricmp(temp, target);				// °¡¿îµ¥ ´Ü¾î¿Í Ã£´Â ´Ü¾î¸¦ ºñ±³(´ë¼Ò¹®ÀÚ °ü°è¾øÀÌ)
+		char *temp = (char*)words[middle].c_str(); // ë¹„êµí•  ì²« ë²ˆì§¸ë‹¨ì–´
+		int comp = _stricmp(temp, target);				// ê°€ìš´ë° ë‹¨ì–´ì™€ ì°¾ëŠ” ë‹¨ì–´ë¥¼ ë¹„êµ(ëŒ€ì†Œë¬¸ì ê´€ê³„ì—†ì´)
 	
 		if (comp == 0) return middle;
 		else if (comp > 0) return find(words, target, begin, middle - 1);
